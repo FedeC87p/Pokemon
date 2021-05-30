@@ -15,6 +15,8 @@
 
 
 ## Configure, Deploy and Run the project
-* 1. goto folder src
-* 2. dotnet run
+* goto folder src
+* dotnet restore
+* dotnet build --no-restore
+* dotnet run
 
