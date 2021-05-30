@@ -28,7 +28,7 @@ namespace PokemonAPI.ApplicationCore
                 var yodaResponse = await _transationService.GetYodaMessageAsync(pokemonDto.Description);
                 if (yodaResponse?.Success != null &&
                     yodaResponse.Success.Total > 0 &&
-                    string.IsNullOrWhiteSpace(yodaResponse.Contents.Translated))
+                    !string.IsNullOrWhiteSpace(yodaResponse.Contents.Translated))
                 {
                     return yodaResponse.Contents.Translated;
                 }

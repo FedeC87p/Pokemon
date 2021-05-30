@@ -3,6 +3,7 @@ using PokemonAPI.ApplicationCore.Dto;
 using PokemonAPI.DomainEntity;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PokemonAPI.ApplicationCore
@@ -53,17 +54,17 @@ namespace PokemonAPI.ApplicationCore
                 Name = pokemonInfo.Name,
                 Habitat = species.Habitat.Name, //No need Rest Call
                 IsLeggendary = species.IsLegendary,
-                Description = species?.Flavor?.FirstOrDefault(i => i.Language?.Name != null &&
+                Description = NormalizeDescription(species?.Flavor?.FirstOrDefault(i => i.Language?.Name != null &&
                                                                     !String.IsNullOrWhiteSpace(i.Flavor_Text) &&
                                                             i.Language.Name.Equals("en", StringComparison.InvariantCultureIgnoreCase))?
-                                                            .Flavor_Text
+                                                            .Flavor_Text)
                                                             ?? ""
             };
 
             if (translateDescription &&
                 !string.IsNullOrWhiteSpace(pokemonDto.Description))
             {
-                pokemonDto.Description = await _descriptionFactory.GetTranslatedDescriptionAsync(pokemonDto);
+                pokemonDto.Description = NormalizeDescription(await _descriptionFactory.GetTranslatedDescriptionAsync(pokemonDto));
             }
 
 
@@ -72,5 +73,11 @@ namespace PokemonAPI.ApplicationCore
             return pokemonFactoryResult;
         }
 
+        private static string NormalizeDescription(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+                return null;
+            return Regex.Replace(description, @"\t|\n|\r|\f", " ");
+        }
     }
 }

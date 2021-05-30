@@ -80,6 +80,15 @@ namespace PokemonAPI.ApplicationCore
             }
 
             //TODO missing cache call (and relative unit test)... sorry
+            var pokemonCacheKey = new PokemonCacheKey(name);
+            if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
+            {
+                var pokemonInfo = _cache.Get<PokemonInfo>(pokemonCacheKey.CacheKey);
+                if (pokemonInfo != null)
+                {
+                    return pokemonInfo;
+                }
+            }
 
             var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = new Uri($"{Startup.PokemonBaseApiUrl}pokemon/{name}/") };
             using (var response = await _httpClient.SendAsync(request))
@@ -97,8 +106,13 @@ namespace PokemonAPI.ApplicationCore
                 }
                 var json = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Json Received");
-                //TODO missing cache call (and relative unit test)... sorry
-                return JsonSerializer.Deserialize<PokemonInfo>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                
+                var result = JsonSerializer.Deserialize<PokemonInfo>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
+                {
+                    _cache.Set(pokemonCacheKey.CacheKey, result); //TODO missing cache services (and relative unit test)... sorry
+                }
+                return result;
             }
         }
 
