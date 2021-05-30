@@ -7,13 +7,13 @@ using PokemonAPI.DomainEntity;
 
 namespace PokemonAPI.ApplicationCore
 {
-    public class DescriptionFactory : IDescriptionFactory
+    public class TranslatedDescriptionFactory : ITranslatedDescriptionFactory
     {
-        private readonly ILogger<DescriptionFactory> _logger;
+        private readonly ILogger<TranslatedDescriptionFactory> _logger;
         private readonly ITransationService _transationService;
 
-        public DescriptionFactory(
-            ILogger<DescriptionFactory> logger,
+        public TranslatedDescriptionFactory(
+            ILogger<TranslatedDescriptionFactory> logger,
             ITransationService transationService)
         {
             _logger = logger;

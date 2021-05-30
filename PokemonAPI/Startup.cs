@@ -29,7 +29,7 @@ namespace PokemonAPI
             services.AddTransient<IPokemonFactory, PokemonFactory>();
             services.AddTransient<ITransationService, TransationService>();
             services.AddTransient<IPokemonService, PokemonService>();
-            services.AddTransient<IDescriptionFactory, DescriptionFactory>();
+            services.AddTransient<ITranslatedDescriptionFactory, TranslatedDescriptionFactory>();
 
             services.AddHttpClient<ITransationService, TransationService>(c =>
             {

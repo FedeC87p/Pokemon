@@ -6,7 +6,7 @@ using PokemonAPI.DomainEntity;
 
 namespace PokemonAPI.ApplicationCore
 {
-    public interface IDescriptionFactory
+    public interface ITranslatedDescriptionFactory
     {
         Task<string> GetTranslatedDescriptionAsync(PokemonDto pokemonDto);
     }

@@ -12,12 +12,12 @@ namespace PokemonAPI.ApplicationCore
     {
         private readonly ILogger<PokemonFactory> _logger;
         private readonly IPokemonService _pokemonService;
-        private readonly IDescriptionFactory _descriptionFactory;
+        private readonly ITranslatedDescriptionFactory _descriptionFactory;
 
         public PokemonFactory(
             ILogger<PokemonFactory> logger, 
             IPokemonService pokemonService,
-            IDescriptionFactory descriptionFactory)
+            ITranslatedDescriptionFactory descriptionFactory)
         {
             _logger = logger;
             _pokemonService = pokemonService;
@@ -58,7 +58,7 @@ namespace PokemonAPI.ApplicationCore
                                                                     !String.IsNullOrWhiteSpace(i.Flavor_Text) &&
                                                             i.Language.Name.Equals("en", StringComparison.InvariantCultureIgnoreCase))?
                                                             .Flavor_Text)
-                                                            ?? ""
+                                                            ?? "" 
             };
 
             if (translateDescription &&

@@ -17,13 +17,13 @@ namespace UnitTest.ApplicationCore
         readonly IPokemonFactory _pokemonFactory;
         readonly ILogger<PokemonFactory> _logger;
         readonly Mock<IPokemonService> _pokemonService;
-        readonly Mock<IDescriptionFactory> _descriptionFactory;
+        readonly Mock<ITranslatedDescriptionFactory> _descriptionFactory;
 
         public PokemonFactoryTest()
         {
             _logger = new Mock<ILogger<PokemonFactory>>().Object;
             _pokemonService = new Mock<IPokemonService>();
-            _descriptionFactory = new Mock<IDescriptionFactory>();
+            _descriptionFactory = new Mock<ITranslatedDescriptionFactory>();
 
             _pokemonFactory = new PokemonFactory(_logger, _pokemonService.Object, _descriptionFactory.Object);
         }
