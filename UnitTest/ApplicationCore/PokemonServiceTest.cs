@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PokemonAPI;
 using PokemonAPI.ApplicationCore;
+using PokemonAPI.ApplicationCore.CacheKeys;
 using PokemonAPI.ApplicationCore.Dto;
 using RichardSzalay.MockHttp;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace UnitTest.ApplicationCore
     public class PokemonServiceTest
     {
         IPokemonService _pokemonService;
+        Mock<ICacheService> _cacheService;
         ILogger<PokemonService> _logger;
 
         public PokemonServiceTest()
         {
             _logger = new Mock<ILogger<PokemonService>>().Object;
+            _cacheService = new Mock<ICacheService>();
         }
 
         [Fact]
@@ -28,7 +31,8 @@ namespace UnitTest.ApplicationCore
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"{Startup.PokemonBaseApiUrl}pokemon/{pokemonName}/").Respond("application/json", System.IO.File.ReadAllText("MockedResponse/mewtwo.json"));
             var client = new HttpClient(mockHttp);
-            _pokemonService = new PokemonService(_logger, client, null);
+            _cacheService.Setup(i => i.Get(It.IsAny<ICacheKey<PokemonInfo>>())).Returns((PokemonInfo)null);
+            _pokemonService = new PokemonService(_logger, client, _cacheService.Object);
 
 
             var result = await _pokemonService.GetPokemonInfoAsync(pokemonName);
@@ -46,7 +50,8 @@ namespace UnitTest.ApplicationCore
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(species.Url).Respond("application/json", System.IO.File.ReadAllText("MockedResponse/Species150.json"));
             var client = new HttpClient(mockHttp);
-            _pokemonService = new PokemonService(_logger, client, null);
+            _cacheService.Setup(i => i.Get(It.IsAny<ICacheKey<PokemonInfo>>())).Returns((PokemonInfo)null);
+            _pokemonService = new PokemonService(_logger, client, _cacheService.Object);
 
 
             var result = await _pokemonService.GetPokemonSpeciesAsync(species);
@@ -66,7 +71,7 @@ namespace UnitTest.ApplicationCore
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(habitat.Url).Respond("application/json", System.IO.File.ReadAllText("MockedResponse/Habitat5.json"));
             var client = new HttpClient(mockHttp);
-            _pokemonService = new PokemonService(_logger, client, null);
+            _pokemonService = new PokemonService(_logger, client, _cacheService.Object);
 
 
             var result = await _pokemonService.GetPokemonHabitatAsync(habitat);

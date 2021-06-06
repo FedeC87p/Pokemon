@@ -1,18 +1,13 @@
 ﻿using PokemonAPI.ApplicationCore.CacheKeys;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PokemonAPI.ApplicationCore
 {
-    //TODO missiong implementation for time.... sorry 
     public interface ICacheService
     {
-        Task<T> GetAsync<T>(ICacheKey<T> key, Func<Task<T>> objectRetriever, int expirationHours = 36)
+        T Get<T>(ICacheKey<T> key)
             where T : class;
 
-        Task InvalidateCacheKeyAsync<T>(ICacheKey<T> key)
+        void Set<T>(ICacheKey<T> key, T value)
             where T : class;
     }
 }

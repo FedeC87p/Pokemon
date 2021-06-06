@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using PokemonAPI.ApplicationCore.CacheKeys;
 using PokemonAPI.ApplicationCore.Dto;
 using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using PokemonAPI.ApplicationCore.Dto;
 
 namespace PokemonAPI.ApplicationCore
 {
@@ -14,12 +12,12 @@ namespace PokemonAPI.ApplicationCore
     {
         private readonly ILogger<PokemonService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly IMemoryCache _cache;
+        private readonly ICacheService _cache;
 
         public PokemonService(
             ILogger<PokemonService> logger,
             HttpClient httpClient,
-            IMemoryCache cache)
+            ICacheService cache)
         {
             _logger = logger;
             _httpClient = httpClient;
@@ -36,13 +34,10 @@ namespace PokemonAPI.ApplicationCore
             }
 
             var habitatCacheKey = new HabitatCacheKey(habitat.Url);
-            if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
+            var habitatDetail = _cache.Get(habitatCacheKey);
+            if (habitatDetail != null)
             {
-                var habitatDetail = _cache.Get<HabitatDetail>(habitatCacheKey.CacheKey); 
-                if (habitatDetail != null)
-                {
-                    return habitatDetail;
-                }
+                return habitatDetail;
             }
 
             var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = new Uri(habitat.Url) };
@@ -62,10 +57,7 @@ namespace PokemonAPI.ApplicationCore
                 var json = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Json Recived");
                 var result =  JsonSerializer.Deserialize<HabitatDetail>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
-                {
-                    _cache.Set(habitatCacheKey.CacheKey, result); //TODO missing cache services (and relative unit test)... sorry
-                }
+                _cache.Set(habitatCacheKey, result); 
                 return result;
             }
         }
@@ -79,15 +71,11 @@ namespace PokemonAPI.ApplicationCore
                 return null;
             }
 
-            //TODO missing cache call (and relative unit test)... sorry
             var pokemonCacheKey = new PokemonCacheKey(name);
-            if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
+            var pokemonInfo = _cache.Get(pokemonCacheKey);
+            if (pokemonInfo != null)
             {
-                var pokemonInfo = _cache.Get<PokemonInfo>(pokemonCacheKey.CacheKey);
-                if (pokemonInfo != null)
-                {
-                    return pokemonInfo;
-                }
+                return pokemonInfo;
             }
 
             var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = new Uri($"{Startup.PokemonBaseApiUrl}pokemon/{name}/") };
@@ -108,10 +96,7 @@ namespace PokemonAPI.ApplicationCore
                 _logger.LogDebug("Json Received");
                 
                 var result = JsonSerializer.Deserialize<PokemonInfo>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (_cache != null)//TODO missing cache services (and relative unit test)... sorry
-                {
-                    _cache.Set(pokemonCacheKey.CacheKey, result); //TODO missing cache services (and relative unit test)... sorry
-                }
+                _cache.Set(pokemonCacheKey, result);
                 return result;
             }
         }
@@ -124,8 +109,6 @@ namespace PokemonAPI.ApplicationCore
                 _logger.LogDebug("Url IsNullOrWhiteSpace");
                 return null;
             }
-
-            //TODO missing cache call (and relative unit test)... sorry
 
             _logger.LogDebug("Start GetPokemonSpecies");
             var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = new Uri(species.Url) };
@@ -144,7 +127,6 @@ namespace PokemonAPI.ApplicationCore
                 }
                 var json = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Json Received");
-                //TODO missing cache call (and relative unit test)... sorry
                 return JsonSerializer.Deserialize<SpeciesDetail>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
         }

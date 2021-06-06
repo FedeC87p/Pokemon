@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using PokemonAPI.ApplicationCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,8 +11,6 @@ namespace UnitTest.ApplicationCore
         readonly ILogger<TranslatedDescriptionFactory> _logger;
         readonly Mock<ITransationService> _transationService;
         ITranslatedDescriptionFactory _descriptionFactory;
-
-        //TODO Missing Test for mockedReponse of _transationService. Sorry
 
         public DescriptionFactoryTest()
         {
