@@ -2,10 +2,6 @@
 
 ![.NET](https://github.com/FedeC87p/PhotoSi/workflows/.NET/badge.svg)
 
-## Project Documentation
-
-
-
 
 ## Tools and Frameworks Used
 * [.NET 5.0]
